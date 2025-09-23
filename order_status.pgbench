@@ -1,4 +1,4 @@
-SELECT w_id FROM ( SELECT w_id FROM warehouse ORDER BY w_id DESC LIMIT (select ceil(count(*)*0.2) from warehouse) ) x ORDER BY random() LIMIT 1 \gset
+SELECT w_id FROM ( SELECT w_id FROM warehouse ORDER BY w_id DESC LIMIT (select ceil(count(*)*:ACTIVE_WHS::float) from warehouse) ) x ORDER BY random() LIMIT 1 \gset
 
 \set d_id random(1, 10)
 \set y random(1, 100)
