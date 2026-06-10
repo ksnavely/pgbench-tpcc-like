@@ -1,6 +1,6 @@
--- Pick a warehouse from the active hot set client-side (see new_order.pgbench for the rationale).
--- NOTE: uses 0.2 rather than :ACTIVE_WHS, preserving the prior hardcoded behaviour here.
-\set active_k greatest(1, int(:NUM_WHS * 0.2))
+-- Pick a warehouse from the active hot set (top ACTIVE_WHS by w_id) client-side. w_id is a
+-- contiguous PK 1..NUM_WHS, so "top k by w_id" == [NUM_WHS-k+1, NUM_WHS]; avoids a per-txn count()+sort.
+\set active_k greatest(1, int(:NUM_WHS * :ACTIVE_WHS))
 \set w_id random(:NUM_WHS - :active_k + 1, :NUM_WHS)
 
 \set amount random(1, 5000)
