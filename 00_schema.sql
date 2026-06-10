@@ -1,4 +1,10 @@
 DROP TABLE IF EXISTS warehouse, item, stock, district, customer, history, oorder, order_line, new_order ;
+
+-- Contiguous warehouse ids (1..N): w_id is populated from this sequence in 01_init_data.pgbench, so
+-- clients can pick a warehouse by random integer in [1..N] (the TPC-C model) without a per-txn query.
+-- Reset here so a fresh schema load always numbers warehouses from 1.
+DROP SEQUENCE IF EXISTS warehouse_w_id_seq ;
+CREATE SEQUENCE warehouse_w_id_seq ;
 -- TRUNCATE TABLE warehouse, item, stock, district, customer, history, oorder, order_line, new_order CASCADE ;
 
 CREATE TABLE IF NOT EXISTS warehouse (
