@@ -1,4 +1,7 @@
-SELECT w_id FROM ( SELECT w_id FROM warehouse ORDER BY w_id DESC LIMIT (select ceil(count(*)*0.2) from warehouse) ) x ORDER BY random() LIMIT 1 \gset
+-- Pick a warehouse from the active hot set client-side (see new_order.pgbench for the rationale).
+-- NOTE: uses 0.2 rather than :ACTIVE_WHS, preserving the prior hardcoded behaviour here.
+\set active_k greatest(1, int(:NUM_WHS * 0.2))
+\set w_id random(:NUM_WHS - :active_k + 1, :NUM_WHS)
 
 \set amount random(1, 5000)
 \set d_id random(1, 10)
@@ -44,7 +47,8 @@ This can be implemented by generating two random numbers x and y within [1 .. 10
     FROM customer
     WHERE c_w_id = :w_id AND c_d_id = :d_id AND c_id = :c_id \gset
 \else
-    SELECT w_id AS c_w_id FROM warehouse ORDER BY random() LIMIT 1 \gset
+    -- remote warehouse: uniform over all warehouses, client-side
+    \set c_w_id random(1, :NUM_WHS)
 \endif
 
 SELECT c_balance, c_credit
