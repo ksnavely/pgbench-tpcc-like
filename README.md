@@ -63,6 +63,15 @@ pgbench -n -c 32 -T 1800 -P 300 -D ACTIVE_WHS=0.3 -D NUM_WHS=400 \
   -f new_order.pgbench@45 -f payment_transaction.pgbench@43 -f order_status.pgbench@4 \
   -f delivery_transaction.pgbench@4 -f stock_check.pgbench@4 tpcc
 
+# PS4 Each script wraps its work in a single BEGIN/COMMIT, so the run does ~1 DB commit per
+#     transaction (not one per statement) - far fewer WAL flushes.
+# PS5 Once warmed up, re-run with `-M prepared` to skip per-statement re-parsing
+#     (extended-protocol prepared statements). Use it only on the benchmark run, NOT on the
+#     one-shot init step above:
+pgbench -n -M prepared -c 32 -T 1800 -P 300 -D ACTIVE_WHS=0.3 -D NUM_WHS=400 \
+  -f new_order.pgbench@45 -f payment_transaction.pgbench@43 -f order_status.pgbench@4 \
+  -f delivery_transaction.pgbench@4 -f stock_check.pgbench@4 tpcc
+
 # Analyze results / stats ...
 ```
 
